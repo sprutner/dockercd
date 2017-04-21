@@ -21,6 +21,10 @@ function getConfigFromS3({ key }, callback) {
 }
 
 function registerJob({ configJson, jobName }, { dockerJSON }, callback) {
+  const owner = dockerJSON.repository.owner
+  const tag = dockerJSON.push_data.tag
+  const pushed_at = dockerJSON.push_data.pushed_at.toString();
+  configJson.Job.TaskGroups[0].Tasks[0].Config.image = `${owner}` + "/" + `${jobName}` + ":" + `${tag}`;
   configJson.Job.TaskGroups[0].Tasks[0].Env.DOCKER_BUILT_AT = dockerJSON.push_data.pushed_at.toString();
   request({
     uri: `${URL_BASE}${jobName}`,
