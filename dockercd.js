@@ -20,10 +20,8 @@ function getConfigFromS3({ key }, callback) {
     })
 }
 
-function registerJob({ configJson, jobName }, callback) {
-  // console.log(configJson);
-  // configJson.Job.Meta.baz = dockerJSON.push_data.pushed_at;
-  // console.log(configJson);
+function registerJob({ configJson, jobName }, { dockerJSON }, callback) {
+  configJson.Job.TaskGroups[0].Tasks[0].Env.DOCKER_BUILT_AT = dockerJSON.push_data.pushed_at.toString();
   request({
     uri: `${URL_BASE}${jobName}`,
     method: 'POST',
@@ -44,7 +42,7 @@ exports.handler = (event, context, callback) => {
   const key = `${jobName}.json`;
   getConfigFromS3({ key }, (err, configJson) => {
     if (err) return callback(err);
-    registerJob({ jobName, configJson }, (err, response) => {
+    registerJob({ jobName, configJson }, { dockerJSON }, (err, response) => {
       if (err) return callback(err);
       callback(null, response);
     });
