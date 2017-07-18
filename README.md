@@ -13,11 +13,18 @@ not from the Continuous Integration / builder of the container.
 
 # Prerequisites #
 
-* AWS API Gateway that can post to your Nomad cluster
+* AWS Lambda function with network access to your Nomad API
+* API Gateway configured to trigger a Lambda function
 
 # Installation #
 
-You simply zip this all up into a lambda function and then upload it to AWS,
-supplying required environment variables. I advise using Terraform to automate this process.
-Terraform module to come w
+First, you must upload a JSON job specification to a S3 bucket, and grant IAM permissions to the Lambda function to read from it.
+
+Then, zip this all up into a Lambda function and then upload it to AWS,
+supplying required environment variables. 
+
+From there, you set up API Gateway to triger the Lambda function, and supply the invocation URL as a webhook under the appropriate container in Docker Hub.  
+
+I advise using Terraform to automate this process.
+In the future, a terraform module will be provided to automate the whole process besides setting the Docker Hub webhook.
 
